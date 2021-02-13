@@ -14,7 +14,7 @@ test('UI loads', ()=>{
 
 describe('api calls', ()=>{
 
-	test('verify whether App.js fetch function is working', ()=>{
+	test('verify whether App.js fetch function is working', async()=>{
 		const fakeResponse = {"data":{"cities":[{"name":"A"}, {"name":"B"}]}};
 		const apiFn = jest.spyOn(fetchUrl, "fetchUrlFn").mockImplementationOnce(()=>{
 			return Promise.resolve({

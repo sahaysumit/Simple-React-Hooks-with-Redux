@@ -29,7 +29,7 @@ const initialFetchState = {
 }
 
 
-export const fetchReducer = (state=initialFetchState, action)=>{
+const fetchReducer = (state=initialFetchState, action)=>{
 	switch(action.type){
 		case FETCH_TYPES.START_FETCH:
 			return {...state, loading:true}

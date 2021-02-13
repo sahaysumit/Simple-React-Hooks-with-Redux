@@ -2,54 +2,61 @@
 import './App.css';
 import React, {useState, useEffect} from 'react';
 import './index.css'
-import ReactCountryFlag from "react-country-flag";
 import {startFetch, finishFetch, failFetch, fetchStore} from './ActionAndReducer.js'
-
+import ReactCountryFlag from "react-country-flag";
 
 
 function populateTbodyForGraphQl(responseData){
-	let finalTbodyString = "";
-	let cities = responseData.data.cities
-	let counter = 0
-	cities.map((data)=>{
-		
-		let jobCity = data.name;
-		let jobCountry= data.country.name;
-		let isoCode = data.country.isoCode;
-		
-		data.jobs.map((jobs)=>{
-			counter+=1;
-
-			let jobTitle = jobs.title;
-			let applyUrl = jobs.applyUrl;
-			let companyName = jobs.company.name;
-			let websiteUrl = jobs.company.websiteUrl;
-			let logo = jobs.company.logoUrl;
-			let remote = jobs.remotes.length !=0 ? "Remote" : ""
-			
-			finalTbodyString+=`
-			<tr>
-				<td>`+counter+`</td>
-				<td><a href=`+applyUrl+`>`+jobTitle+`</a></td>
-				<td><a href=`+websiteUrl+`>`+companyName+`</a></td>
-				<td>`+jobCity+`</td>
-				<td>`+jobCountry+`</td>
-				<td>`+remote+`</td>
-			</tr>`
-				
-		});
-
-	});
-	return finalTbodyString;
-}
-
-function appendTbodyGraphQl(responseData){
 	if(responseData.length !=0){
-		return {
-			__html: populateTbodyForGraphQl(responseData)
-		};	
+		let finalTbodyString = [];
+		let cities = responseData.data.cities
+		let counter = 0
+		cities.map((data)=>{
+			
+			let jobCity = data.name;
+			let jobCountry= data.country.name;
+			let isoCode = data.country.isoCode;
+			
+			data.jobs.map((jobs)=>{
+				counter+=1;
+
+				let jobTitle = jobs.title;
+				let applyUrl = jobs.applyUrl;
+				let companyName = jobs.company.name;
+				let websiteUrl = jobs.company.websiteUrl;
+				let logo = jobs.company.logoUrl;
+				let remote = jobs.remotes.length !=0 ? "Remote" : ""
+				
+				finalTbodyString.push(
+					<tr>
+						<td>{counter}</td>
+						<td>
+							<a href={applyUrl}>{jobTitle}</a>
+						</td>
+						<td>
+							<a href={websiteUrl}>{companyName}</a>
+						</td><td>{jobCity}</td>
+						<td><ReactCountryFlag countryCode={isoCode} />{jobCountry}</td>
+						<td>{remote}</td>
+					</tr>
+				);
+			});
+
+		});
+		return finalTbodyString;
 	}
 }
+
+function testFn(){
+	let list = [];
+	for(var i=0; i<10; i++){
+
+		list.push(<div>hellos</div>);
+	}
+	return (list)
+}
+
+
 export const fetchUrl = {
 	async fetchUrlFn(url, method, headers, body){
 		return fetch(url, {
@@ -103,14 +110,15 @@ function App() {
 	},[]);
 
 
-	fetchStore.subscribe(()=>{
+	fetchStore.subscribe(async()=>{
 		if(fetchStore.getState().data !=null){
-			setFinalResponse(fetchStore.getState().data);
+			await setFinalResponse(fetchStore.getState().data);
 		}
 	});
 
   return (
   	<div className="table-graphql-div">
+  		
 	    <table className="table table-bordered table-graphql">
 	    	<thead>
 	    		<tr>
@@ -123,12 +131,13 @@ function App() {
 	    		</tr>
 	    	</thead>
 
-	    	<tbody dangerouslySetInnerHTML={appendTbodyGraphQl(finalResponse)}>
-				
+	    	<tbody>
+	    		{populateTbodyForGraphQl(finalResponse)}
 	    	</tbody>
 	    </table>
 	 </div>
   );
+
 }
 
 export default App;
