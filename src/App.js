@@ -47,15 +47,6 @@ function populateTbodyForGraphQl(responseData){
 	}
 }
 
-function testFn(){
-	let list = [];
-	for(var i=0; i<10; i++){
-
-		list.push(<div>hellos</div>);
-	}
-	return (list)
-}
-
 
 export const fetchUrl = {
 	async fetchUrlFn(url, method, headers, body){
